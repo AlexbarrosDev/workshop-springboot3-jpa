@@ -10,7 +10,11 @@ public enum OrderStatus {
 
     private int code;
 
-    private OrderStatus (int code) {
+    /*
+    Cada constante do enum chama esse construtor passando seu número.
+    → Por exemplo: WAITING_PAYMENT(1) chama OrderStatus(1) → guarda 1 no code.
+    */
+    private OrderStatus (int code) { // CONSTRUCTOR
         this.code = code;
     }
 
