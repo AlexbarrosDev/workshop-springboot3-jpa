@@ -4,6 +4,7 @@ import com.praticandoweb.webservice.entities.User;
 import com.praticandoweb.webservice.repositories.UserRepository;
 import com.praticandoweb.webservice.services.exceptions.DatabaseException;
 import com.praticandoweb.webservice.services.exceptions.ResourcesNotFoundException;
+import jakarta.persistence.EntityNotFoundException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.dao.EmptyResultDataAccessException;
@@ -32,19 +33,24 @@ public class UserService {
     }
 
     public void delete(Long id) {
+        if (!repository.existsById(id)) {
+            throw new ResourcesNotFoundException(id);
+        }
         try {
             repository.deleteById(id);
-        } catch (EmptyResultDataAccessException e) {
-            throw new ResourcesNotFoundException(id);
         } catch (DataIntegrityViolationException e) {
             throw new DatabaseException(e.getMessage());
         }
     }
 
     public User update(Long id, User obj) {
-        User entity = repository.getReferenceById(id);
-        updateData(entity, obj);
-        return repository.save(entity);
+        try {
+            User entity = repository.getReferenceById(id);
+            updateData(entity, obj);
+            return repository.save(entity);
+        } catch (EntityNotFoundException e) {
+            throw new ResourcesNotFoundException(id);
+        }
     }
 
     private void updateData(User entity, User obj) {
