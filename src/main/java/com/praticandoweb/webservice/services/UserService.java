@@ -2,6 +2,7 @@ package com.praticandoweb.webservice.services;
 
 import com.praticandoweb.webservice.entities.User;
 import com.praticandoweb.webservice.repositories.UserRepository;
+import com.praticandoweb.webservice.services.exceptions.ResourcesNotFoundException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -20,7 +21,7 @@ public class UserService {
 
     public User findById(Long id) {
         Optional<User> obj = repository.findById(id);
-        return obj.get();
+        return obj.orElseThrow(() -> new ResourcesNotFoundException(id));
     }
 
     public User insert(User obj) {
